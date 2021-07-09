@@ -46,22 +46,22 @@ describe("aws-ssm-send-command-action", () => {
   it("waits and retries until the status is not InProgress", async () => {
     const CommandId = 'CommandId', Status = 'InProgress', Output = 'Output';
     let attempts = 0;
-    (MockedClient as jest.Mock).mockImplementation(() => ({
-      send: jest.fn((arg) => {
-        if (arg instanceof SendCommandCommand) {
-          return {Command: {CommandId}};
-        } else {
-          if (attempts == 0) {
-            attempts += 1;
-            return {CommandInvocations: [{Status, CommandPlugins: [{Status, Output}]}]};
-          }
-          return {CommandInvocations: [{Status: 'Success', CommandPlugins: [{Status, Output}]}]};
+    const send = jest.fn((arg) => {
+      if (arg instanceof SendCommandCommand) {
+        return {Command: {CommandId}};
+      } else {
+        if (attempts == 0) {
+          attempts += 1;
+          return {CommandInvocations: [{Status, CommandPlugins: [{Status, Output}]}]};
         }
-      })
-    }));
+        return {CommandInvocations: [{Status: 'Success', CommandPlugins: [{Status, Output}]}]};
+      }
+    });
+    (MockedClient as jest.Mock).mockImplementation(() => ({send}));
 
     await main();
 
     expect(core.setOutput).toHaveBeenCalledTimes(2);
+    expect(send).toHaveBeenCalledTimes(3);
   });
 });
