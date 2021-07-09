@@ -41,10 +41,13 @@ async function main() {
       continue;
     } else {
       const {Status, Output} = invocation.CommandPlugins?.[0] || {};
-      console.log({Status, Output});
-      core.setOutput('status', Status);
-      core.setOutput('output', Output);
-      break;
+      if (Status == 'Success') {
+        core.setOutput('status', Status);
+        core.setOutput('output', Output);
+        break;
+      } else {
+        throw Error(`Failed to run send-command:\n${Output}`);
+      }
     }
   }
 }
