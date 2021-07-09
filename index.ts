@@ -46,7 +46,8 @@ async function main() {
         core.setOutput('output', Output);
         break;
       } else {
-        throw Error(`Failed to run send-command:\n${Output}`);
+        core.warning(JSON.stringify({Status, Output}));
+        throw Error("Failed to run send-command!");
       }
     }
   }
