@@ -38,9 +38,7 @@ async function main() {
     Atomics.wait(int32, 0, 0, 1000);
     const result = await client.send(new ListCommandInvocationsCommand({CommandId, Details: true}));
     const invocation = result.CommandInvocations?.[0] || {};
-    if (invocation.Status == 'InProgress') {
-      continue;
-    } else {
+    if (invocation.Status != 'InProgress') {
       const {Status, Output} = invocation.CommandPlugins?.[0] || {};
       if (Status == 'Success') {
         core.setOutput('status', Status);
@@ -48,7 +46,7 @@ async function main() {
         break;
       } else {
         core.warning(JSON.stringify({Status, Output}));
-        throw Error("Failed to run send-command!");
+        throw new Error("Failed to run send-command!");
       }
     }
   }
