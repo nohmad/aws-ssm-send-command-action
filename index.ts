@@ -29,7 +29,7 @@ async function main() {
     DocumentName: core.getInput('document-name'),
     Parameters: getInputParameters(),
   });
-  core.info(JSON.stringify(command));
+  core.debug(JSON.stringify(command));
   const result = await client.send(command);
   const CommandId = result.Command?.CommandId;
   
@@ -45,7 +45,7 @@ async function main() {
         core.setOutput('output', Output);
         break;
       } else {
-        core.warning(JSON.stringify({Status, Output}));
+        core.debug(JSON.stringify({Status, Output}));
         throw new Error("Failed to run send-command!");
       }
     }
