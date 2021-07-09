@@ -29,10 +29,11 @@ async function main() {
     DocumentName: core.getInput('document-name'),
     Parameters: getInputParameters(),
   });
+  core.info(JSON.stringify(command));
   const result = await client.send(command);
   const CommandId = result.Command?.CommandId;
   
-  const int32 = new Int32Array(new SharedArrayBuffer(4))
+  const int32 = new Int32Array(new SharedArrayBuffer(4));
   for (let i = 0; i < TimeoutSeconds; i++) {
     Atomics.wait(int32, 0, 0, 1000);
     const result = await client.send(new ListCommandInvocationsCommand({CommandId, Details: true}));

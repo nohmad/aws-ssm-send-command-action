@@ -23,7 +23,7 @@ inputs:
     required: true
   timeout:
     description: Timeout to command
-    default: '30'
+    default: '60'
     required: false
 
 outputs:
