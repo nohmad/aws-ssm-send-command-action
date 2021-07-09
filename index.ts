@@ -46,6 +46,6 @@ async function main() {
     }
   }
 }
-// main().catch(e => core.setFailed(e.message));
+main().catch(e => core.setFailed(e.message));
 
 export default main;
