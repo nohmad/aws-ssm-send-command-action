@@ -11,7 +11,7 @@ Run AWS's SSM Send-Command using this action
       aws-region: ap-northeast-2
       targets: Key=InstanceIds,Values=i-1234567890
       parameters: |
-        command=["uname -a"]
+        commands=["uname -a"]
 ```
 
 ## Inputs
