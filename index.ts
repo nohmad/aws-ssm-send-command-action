@@ -40,8 +40,10 @@ async function main() {
     if (invocation.Status == 'InProgress') {
       continue;
     } else {
-      core.setOutput('status', invocation.CommandPlugins?.[0].Status);
-      core.setOutput('output', invocation.CommandPlugins?.[0].Output);
+      const {Status, Output} = invocation.CommandPlugins?.[0] || {};
+      console.log({Status, Output});
+      core.setOutput('status', Status);
+      core.setOutput('output', Output);
       break;
     }
   }
