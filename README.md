@@ -9,9 +9,10 @@ Run AWS's SSM Send-Command using this action
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       aws-region: ap-northeast-2
-      targets: Key=InstanceIds,Values=i-1234567890
+      targets: |
+        [{"Key":"InstanceIds","Values":["i-1234567890"]}]
       parameters: |
-        commands=["uname -a"]
+        {"commands":["uname -a"]}
 ```
 
 ## Inputs
@@ -28,27 +29,36 @@ Run AWS's SSM Send-Command using this action
 
 **Required**. `secrets.AWS_REGION`
 
-### targets
-
-**Required**. Specify target instances referring to [AWS](https://docs.aws.amazon.com/cli/latest/reference/ssm/send-command.html)
-
 ### document-name
 
 Currently, only the **AWS-RunShellScript** was tested.
 
+### targets
+
+**Required**. Specify target instances by referring to [AWS](https://docs.aws.amazon.com/cli/latest/reference/ssm/send-command.html)
+```json
+[
+  {
+    "Key": "tag:Name", "Values": ["ec2-instance-name"]
+  },
+  {
+    "Key": "InstanceIds", "Values": ["i-1234567890"]
+  }
+]
+```
+
 ### parameters
 
-**Required**. Parameters to the document. Must be formatted like `commands=["uname -a"]`
+**Required**. Parameters to the document. Must be formatted as JSON:
+```json
+{"commands": ["uname -a"]}
+```
 
 ## Outputs
 
 ### status
 
 Taken from `.CommandInvocations[0].CommandPlugins[0].Status`.  `Success` or `Failure`
-
-### output
-
-Taken from `.CommandInvocations[0].CommandPlugins[0].Output`.
 
 ## Author
 

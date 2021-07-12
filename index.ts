@@ -1,19 +1,5 @@
-import { SSMClient, SendCommandCommand, Target, ListCommandInvocationsCommand } from '@aws-sdk/client-ssm';
+import { SSMClient, SendCommandCommand, ListCommandInvocationsCommand } from '@aws-sdk/client-ssm';
 import * as core from '@actions/core';
-
-function getInputTargets(): [Target] {
-  const targets = core.getInput('targets');
-  const Key = targets.match(/^Key=([^,]+),/)?.[1];
-  const Values = targets.match(/,Values=(.+)$/)?.[1].split(',');
-  return [{Key, Values}];
-}
-
-function getInputParameters() {
-  const parameters = core.getInput('parameters');
-  const key = parameters.match(/([^=]+)=/)?.[1] as string;
-  const values = JSON.parse(parameters.match(/=(.+)$/)?.[1] || '[]') as [];
-  return {[key]: values};
-}
 
 async function main() {
   const credentials = {
@@ -25,9 +11,9 @@ async function main() {
   const TimeoutSeconds = parseInt(core.getInput('timeout'));
   const command = new SendCommandCommand({
     TimeoutSeconds,
-    Targets: getInputTargets(),
+    Targets: JSON.parse(core.getInput('targets')),
     DocumentName: core.getInput('document-name'),
-    Parameters: getInputParameters(),
+    Parameters: JSON.parse(core.getInput('parameters')),
   });
   if (core.isDebug()) {
     core.debug(JSON.stringify(command));
@@ -41,15 +27,15 @@ async function main() {
     const result = await client.send(new ListCommandInvocationsCommand({CommandId, Details: true}));
     const invocation = result.CommandInvocations?.[0] || {};
     if (invocation.Status != 'InProgress') {
-      const {Status, Output} = invocation.CommandPlugins?.[0] || {};
-      if (Status == 'Success') {
-        core.setOutput('status', Status);
-        core.setOutput('output', Output);
-        break;
-      } else {
-        core.warning(JSON.stringify({Status, Output}));
-        throw new Error("Failed to run send-command!");
+      for (const cp of invocation.CommandPlugins || []) {
+        if (cp?.Status == 'Success') {
+          core.info(cp.Output as string);
+        } else {
+          core.warning(cp.Output as string);
+        }
       }
+      core.setOutput('status', invocation.Status);
+      break;
     }
   }
 }
