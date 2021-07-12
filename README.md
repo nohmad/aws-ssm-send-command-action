@@ -1,6 +1,6 @@
 # AWS SSM Send-Command Action
 
-Run AWS's SSM Send-Command using this action
+Run AWS's SSM Send-Command API using this action. Refer to [AWS SDK for JavaScript v3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-ssm/interfaces/sendcommandcommandinput.html).
 
 ```yml
   - name: Run aws ssm send-command
@@ -35,7 +35,7 @@ Currently, only the **AWS-RunShellScript** was tested.
 
 ### targets
 
-**Required**. Specify target instances by referring to [AWS](https://docs.aws.amazon.com/cli/latest/reference/ssm/send-command.html)
+**Required**. Specify target instances by JSON format.
 ```json
 [
   {
@@ -58,7 +58,7 @@ Currently, only the **AWS-RunShellScript** was tested.
 
 ### status
 
-Taken from `.CommandInvocations[0].CommandPlugins[0].Status`.  `Success` or `Failure`
+Taken from `.CommandInvocations[0].Status`.  `Success` or `Failure`
 
 ## Author
 
