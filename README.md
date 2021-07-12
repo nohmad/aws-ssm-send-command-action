@@ -11,6 +11,7 @@ Run AWS's SSM Send-Command API using this action. Refer to [AWS SDK for JavaScri
       aws-region: ap-northeast-2
       targets: |
         [{"Key":"InstanceIds","Values":["i-1234567890"]}]
+      document-name: AWS-RunShellScript
       parameters: |
         {"commands":["uname -a"]}
 ```
