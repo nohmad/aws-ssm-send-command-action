@@ -28,7 +28,9 @@ inputs:
 
 outputs:
   status:
-    description: Status
+    description: Status of command
+  command-id:
+    description: CommandId to check the details of the command executed  
 
 runs:
   using: node12

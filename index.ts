@@ -20,20 +20,14 @@ async function main() {
   }
   const result = await client.send(command);
   const CommandId = result.Command?.CommandId;
+  core.setOutput('command-id', CommandId);
   
   const int32 = new Int32Array(new SharedArrayBuffer(4));
   for (let i = 0; i < TimeoutSeconds; i++) {
     Atomics.wait(int32, 0, 0, 1000);
-    const result = await client.send(new ListCommandInvocationsCommand({CommandId, Details: true}));
+    const result = await client.send(new ListCommandInvocationsCommand({CommandId}));
     const invocation = result.CommandInvocations?.[0] || {};
-    if (invocation.Status != 'InProgress') {
-      for (const cp of invocation.CommandPlugins || []) {
-        if (cp?.Status == 'Success') {
-          core.info(cp.Output as string);
-        } else {
-          core.warning(cp.Output as string);
-        }
-      }
+    if (['Success', 'Failure'].includes(invocation.Status as string)) {
       core.setOutput('status', invocation.Status);
       break;
     }

@@ -61,6 +61,10 @@ Currently, only the **AWS-RunShellScript** was tested.
 
 Taken from `.CommandInvocations[0].Status`.  `Success` or `Failure`
 
+### command-id
+
+`CommandId` to check the details of the command executed.
+
 ## Author
 
 GY Noh <nohmad@gmail.com>
