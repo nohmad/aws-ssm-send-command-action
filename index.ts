@@ -9,13 +9,15 @@ async function main() {
   const region = core.getInput('aws-region');
   const client = new SSMClient({region, credentials});
   const TimeoutSeconds = parseInt(core.getInput('timeout'));
+  const parameters = core.getInput('parameters', {required: true});
   const command = new SendCommandCommand({
     TimeoutSeconds,
-    Targets: JSON.parse(core.getInput('targets')),
+    Targets: JSON.parse(core.getInput('targets', {required: true})),
     DocumentName: core.getInput('document-name'),
-    Parameters: JSON.parse(core.getInput('parameters')),
+    Parameters: JSON.parse(parameters),
   });
   if (core.isDebug()) {
+    core.debug(parameters);
     core.debug(JSON.stringify(command));
   }
   const result = await client.send(command);
