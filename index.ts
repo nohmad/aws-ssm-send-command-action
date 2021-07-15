@@ -23,15 +23,20 @@ async function main() {
   core.setOutput('command-id', CommandId);
   
   const int32 = new Int32Array(new SharedArrayBuffer(4));
+  const outputs = [];
   for (let i = 0; i < TimeoutSeconds; i++) {
     Atomics.wait(int32, 0, 0, 1000);
-    const result = await client.send(new ListCommandInvocationsCommand({CommandId}));
+    const result = await client.send(new ListCommandInvocationsCommand({CommandId, Details: true}));
     const invocation = result.CommandInvocations?.[0] || {};
     if (['Success', 'Failure'].includes(invocation.Status as string)) {
+      for (const cp of invocation.CommandPlugins || []) {
+        outputs.push(cp.Output as string);
+      }
       core.setOutput('status', invocation.Status);
       break;
     }
   }
+  core.setOutput('output', outputs.join('\n'));
 }
 main().catch(e => core.setFailed(e.message));
 
