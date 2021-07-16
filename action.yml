@@ -31,6 +31,8 @@ outputs:
     description: Status of command
   command-id:
     description: CommandId to check the details of the command executed  
+  output:
+    description: Command output
 
 runs:
   using: node12

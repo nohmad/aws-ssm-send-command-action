@@ -69,6 +69,10 @@ Taken from `.CommandInvocations[0].Status`.  `Success` or `Failure`
 aws ssm list-command-invocations --command-id <command-id> --details
 ```
 
+### output
+
+Command output
+
 ## Author
 
 GY Noh <nohmad@gmail.com>
