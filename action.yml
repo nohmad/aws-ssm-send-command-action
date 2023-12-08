@@ -25,6 +25,10 @@ inputs:
     description: Timeout to command
     default: '60'
     required: false
+  enableCloudwatchLogging:
+    description: Whether to enabled streaming logs to CloudWatch.
+    default: 'false'
+    required: false
 
 outputs:
   status:
@@ -35,7 +39,7 @@ outputs:
     description: Command output
 
 runs:
-  using: node12
+  using: node20
   main: dist/index.js
 
 branding:

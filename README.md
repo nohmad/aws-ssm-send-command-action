@@ -55,6 +55,10 @@ Currently, only the **AWS-RunShellScript** was tested.
 {"commands": ["uname -a"]}
 ```
 
+### enableCloudwatchLogging
+
+_Optional._ `true` if logging to CloudWatch should be enabled.
+
 ## Outputs
 
 ### status

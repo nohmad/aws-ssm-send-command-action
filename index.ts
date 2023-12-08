@@ -1,4 +1,4 @@
-import { SSMClient, SendCommandCommand, ListCommandInvocationsCommand } from '@aws-sdk/client-ssm';
+import { SSMClient, SendCommandCommand, SendCommandCommandInput, ListCommandInvocationsCommand } from '@aws-sdk/client-ssm';
 import * as core from '@actions/core';
 
 async function main() {
@@ -10,16 +10,26 @@ async function main() {
   const client = new SSMClient({region, credentials});
   const TimeoutSeconds = parseInt(core.getInput('timeout'));
   const parameters = core.getInput('parameters', {required: true});
-  const command = new SendCommandCommand({
+  const enableCloudwatchLogging = core.getInput('enableCloudwatchLogging');
+
+  const commandInput: SendCommandCommandInput = {
     TimeoutSeconds,
     Targets: JSON.parse(core.getInput('targets', {required: true})),
     DocumentName: core.getInput('document-name'),
     Parameters: JSON.parse(parameters),
-  });
+  };
+  if ("true" === enableCloudwatchLogging) {
+    commandInput.CloudWatchOutputConfig = {
+      CloudWatchOutputEnabled: true,
+    }
+  }
+  const command = new SendCommandCommand(commandInput);
+
   if (core.isDebug()) {
     core.debug(parameters);
     core.debug(JSON.stringify(command));
   }
+
   const result = await client.send(command);
   const CommandId = result.Command?.CommandId;
   core.setOutput('command-id', CommandId);
