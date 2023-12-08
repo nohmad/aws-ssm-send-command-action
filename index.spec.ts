@@ -18,6 +18,7 @@ const DEFAULT_INPUTS = new Map([
   ['targets', '[{"Key":"InstanceIds","Values":["i-1234567890"]}]'],
   ['document-name', 'AWS-RunShellScript'],
   ['parameters', '{"commands":["ls -al"]}'],
+  ['enableCloudwatchLogging', 'true'],
 ]); // order is important
 
 describe("aws-ssm-send-command-action", () => {
@@ -41,10 +42,11 @@ describe("aws-ssm-send-command-action", () => {
     const {calls} = send.mock;
     expect(calls[0][0].constructor).toBe(SendCommandCommand);
     expect(calls[1][0].constructor).toBe(ListCommandInvocationsCommand);
-    const command = (MockedSendCommand as jest.Mock).mock.calls[0][0];
+    const command = (MockedSendCommand as unknown as jest.Mock).mock.calls[0][0];
     expect(command.Targets).toEqual(JSON.parse(DEFAULT_INPUTS.get('targets') as string));
     expect(command.DocumentName).toEqual(DEFAULT_INPUTS.get('document-name') as string);
     expect(command.Parameters).toEqual(JSON.parse(DEFAULT_INPUTS.get('parameters') as string));
+    expect(command.CloudWatchOutputConfig.CloudWatchOutputEnabled).toEqual(true);
     expect(core.setOutput).toHaveBeenCalledWith('status', 'Success');
   });
 
